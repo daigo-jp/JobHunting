@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">JobHunting</string>
-
     <string name="title_create_note">○○会社メモ新規作成</string>
     <string name="label_note_title">メモタイトル</string>
     <string name="label_note_content">メモ内容</string>
