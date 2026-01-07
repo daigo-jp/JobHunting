@@ -1,20 +1,39 @@
 <resources>
-    <string name="app_name">Job_Hunting</string>
+
+    <!-- App -->
+    <string name="app_name">JobHunting</string>
+
+    <!-- Sample / Test -->
     <string name="www">Hello World</string>
 
-    <!-- Wallet activity -->
+    <!-- Company list -->
     <string name="title_activity_companylist">CompanylistActivity</string>
-    <string name="add_to_google_wallet_button_content_description">Add to Google Wallet</string>
+
+    <!-- Wallet activity -->
+    <string name="add_to_google_wallet_button_content_description">
+        Add to Google Wallet
+    </string>
     <string name="sample_pass" translatable="false">Sample Pass</string>
-    <string name="google_wallet_status_unavailable" translatable="false">Unfortunately, Google
-        Wallet is not available on this phone.
+    <string name="google_wallet_status_unavailable" translatable="false">
+        Unfortunately, Google Wallet is not available on this phone.
     </string>
-    <string name="add_google_wallet_success" translatable="false">The pass was added successfully!
+    <string name="add_google_wallet_success" translatable="false">
+        The pass was added successfully!
     </string>
-    <string name="add_google_wallet_cancelled" translatable="false">The user cancelled adding the
-        pass to Google Wallet.
+    <string name="add_google_wallet_cancelled" translatable="false">
+        The user cancelled adding the pass to Google Wallet.
     </string>
-    <string name="add_google_wallet_unknown_error" translatable="false">An unknown error occurred
-        when adding pass to Google Wallet.
+    <string name="add_google_wallet_unknown_error" translatable="false">
+        An unknown error occurred when adding pass to Google Wallet.
     </string>
+
+    <!-- Memo -->
+    <string name="title_create_note">○○会社メモ新規作成</string>
+    <string name="label_note_title">メモタイトル</string>
+    <string name="label_note_content">メモ内容</string>
+    <string name="hint_note_title">タイトルを入力</string>
+    <string name="hint_note_content">内容を入力</string>
+    <string name="button_create">作成</string>
+    <string name="description_back">戻る</string>
+
 </resources>
