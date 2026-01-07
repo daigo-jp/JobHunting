@@ -13,11 +13,13 @@
         android:theme="@style/Theme.Job_Hunting"
         tools:targetApi="31">
         <activity
-<<<<<<< HEAD
+            android:name=".Login"
+            android:exported="false" />
+        <activity
             android:name=".CreateNote"
-=======
+            android:exported="false" />
+        <activity
             android:name=".MemoList"
->>>>>>> cf6cce3175c16fb93a7b94bfe86a82c49d4f0590
             android:exported="false" />
         <activity
             android:name=".MainActivity"
