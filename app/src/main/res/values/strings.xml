@@ -1,4 +1,11 @@
 <resources>
-    <string name="app_name">Job_Hunting</string>
-    <string name="www">Hello World</string>
+    <string name="app_name">JobHunting</string>
+
+    <string name="title_create_note">○○会社メモ新規作成</string>
+    <string name="label_note_title">メモタイトル</string>
+    <string name="label_note_content">メモ内容</string>
+    <string name="hint_note_title">タイトルを入力</string>
+    <string name="hint_note_content">内容を入力</string>
+    <string name="button_create">作成</string>
+    <string name="description_back">戻る</string>
 </resources>
