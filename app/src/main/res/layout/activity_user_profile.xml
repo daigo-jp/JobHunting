@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back_arrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ユーザー情報の編集"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/btnBack"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnBack" />
+
+        <TextView
+            android:id="@+id/tvSectionUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="ユーザー情報"
+            android:textColor="@android:color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnBack" />
+
+        <ImageView
+            android:id="@+id/ivUserIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_user_placeholder"
+            app:layout_constraintBottom_toBottomOf="@id/tvSectionUser"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvSectionUser" />
+
+        <LinearLayout
+            android:id="@+id/layoutName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSectionUser">
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="姓" android:layout_marginEnd="8dp"/>
+            <EditText android:id="@+id/etLastName" android:layout_width="0dp" android:layout_height="45dp" android:layout_weight="1" android:background="@drawable/bg_edittext_outline" android:padding="8dp" android:inputType="textPersonName"/>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="名" android:layout_marginStart="16dp" android:layout_marginEnd="8dp"/>
+            <EditText android:id="@+id/etFirstName" android:layout_width="0dp" android:layout_height="45dp" android:layout_weight="1" android:background="@drawable/bg_edittext_outline" android:padding="8dp" android:inputType="textPersonName"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/lblEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="メールアドレス"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutName" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:padding="8dp"
+            android:hint="email@domain.com"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toBottomOf="@id/lblEmail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/lblEmail"
+            app:layout_constraintTop_toTopOf="@id/lblEmail" />
+
+        <TextView
+            android:id="@+id/tvSectionAnalysis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="自己分析情報"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etEmail" />
+
+        <TextView
+            android:id="@+id/lblSkill"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="スキル"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSectionAnalysis" />
+
+        <EditText
+            android:id="@+id/etSkill"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:gravity="top"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/lblSkill"
+            app:layout_constraintTop_toTopOf="@id/lblSkill" />
+
+        <TextView
+            android:id="@+id/lblExperience"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="経験"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etSkill" />
+
+        <EditText
+            android:id="@+id/etExperience"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:background="@drawable/bg_edittext_outline"
+            android:gravity="top"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/lblExperience"
+            app:layout_constraintTop_toTopOf="@id/lblExperience" />
+
+        <TextView
+            android:id="@+id/lblDirection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="志向性"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/etExperience" />
+
+        <GridLayout
+            android:id="@+id/gridDirection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:columnCount="2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblDirection">
+
+            <TextView android:id="@+id/tagGrowth" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_tag" android:drawableStart="@drawable/ic_star" android:drawablePadding="8dp" android:padding="12dp" android:text="成長" android:textColor="#2D8A68" android:gravity="center_vertical" />
+            <TextView android:id="@+id/tagStability" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_tag" android:drawableStart="@drawable/ic_star" android:drawablePadding="8dp" android:padding="12dp" android:text="安定" android:textColor="#2D8A68" android:gravity="center_vertical" />
+            <TextView android:id="@+id/tagChallenge" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_tag" android:drawableStart="@drawable/ic_star" android:drawablePadding="8dp" android:padding="12dp" android:text="挑戦" android:textColor="#2D8A68" android:gravity="center_vertical" />
+            <TextView android:id="@+id/tagExpert" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_tag" android:drawableStart="@drawable/ic_star" android:drawablePadding="8dp" android:padding="12dp" android:text="専門" android:textColor="#2D8A68" android:gravity="center_vertical" />
+        </GridLayout>
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="24dp"
+            android:backgroundTint="#2D8A68"
+            android:text="登録"
+            app:cornerRadius="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/gridDirection" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
