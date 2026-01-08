@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 // データクラス（変更なし）
-data class Memo(
+data class TestMemo(
     val title: String,
     val date: String,
     val content: String
@@ -38,11 +38,11 @@ class MemoList : AppCompatActivity() {
 
         // 1. 表示するデータの作成（ダミーデータ）
         val memoList = listOf(
-            Memo("メモタイトル", "2025/11/11", "11/11のメモ内容です。\nここをクリックすると詳細が表示されます。"),
-            Memo("メモタイトル", "2025/11/12", "11/12のメモ内容です。"),
-            Memo("メモタイトル", "2025/11/15", "11/15のメモ内容です。"),
-            Memo("メモタイトル", "2025/12/22", "12/22のメモ内容です。"),
-            Memo("メモタイトル", "2025/11/25", "11/25のメモ内容です。")
+            TestMemo("メモタイトル", "2025/11/11", "11/11のメモ内容です。\nここをクリックすると詳細が表示されます。"),
+            TestMemo("メモタイトル", "2025/11/12", "11/12のメモ内容です。"),
+            TestMemo("メモタイトル", "2025/11/15", "11/15のメモ内容です。"),
+            TestMemo("メモタイトル", "2025/12/22", "12/22のメモ内容です。"),
+            TestMemo("メモタイトル", "2025/11/25", "11/25のメモ内容です。")
         )
 
         // 2. 画面上のパーツ（View）を取得
@@ -69,8 +69,8 @@ class MemoList : AppCompatActivity() {
 // --- 以下、アダプタークラス（同じファイル内に追記） ---
 
 class MemoAdapter(
-    private val memos: List<Memo>,
-    private val onItemClick: (Memo) -> Unit
+    private val memos: List<TestMemo>,
+    private val onItemClick: (TestMemo) -> Unit
 ) : RecyclerView.Adapter<MemoAdapter.MemoViewHolder>() {
 
     // 行のレイアウトを読み込む
@@ -100,7 +100,7 @@ class MemoAdapter(
         private val titleText: TextView = view.findViewById(R.id.rowTitle)
         private val dateText: TextView = view.findViewById(R.id.rowDate)
 
-        fun bind(memo: Memo) {
+        fun bind(memo: TestMemo) {
             titleText.text = memo.title
             dateText.text = memo.date
         }
