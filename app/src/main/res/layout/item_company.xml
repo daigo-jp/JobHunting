@@ -5,88 +5,129 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <!-- ===== 常時表示 ===== -->
+    <!-- 企業名行（常に表示） -->
     <LinearLayout
-        android:id="@+id/layoutCompanyHeader"
+        android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <!-- 星（お気に入り） -->
+        <!-- お気に入り（★） -->
         <ImageView
-            android:id="@+id/ivFavorite"
+            android:id="@+id/imageFavorite"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:src="@drawable/ic_star_off"
             android:contentDescription="お気に入り"
-            android:padding="2dp"
-            android:src="@android:drawable/btn_star_big_off" />
+            android:layout_marginEnd="8dp"/>
 
+        <!-- 企業名 -->
         <TextView
-            android:id="@+id/tvCompanyName"
-            android:layout_width="0dp"
+            android:id="@+id/textCompanyName"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="会社名"
+            android:text="企業名"
             android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/ivExpandArrow"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/arrow_down_float" />
+            android:textStyle="bold"/>
     </LinearLayout>
 
-    <!-- ===== ドロップダウン ===== -->
+    <!-- ドロップダウン表示エリア -->
     <LinearLayout
-        android:id="@+id/layoutCompanyDetail"
+        android:id="@+id/layoutDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="8dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
-        <!-- 編集 -->
+        <!-- 編集ボタン -->
         <Button
-            android:id="@+id/btnEditCompany"
+            android:id="@+id/buttonEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:text="編集" />
 
-        <!-- 登録情報表示 -->
-
-        <TextView
-            android:id="@+id/tvCompanyLocation"
-            android:layout_width="wrap_content"
+        <!-- 所在地 -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="・所在地"
-            android:textSize="14sp" />
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvCompanyStatus"
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="所在地："
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textLocationValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- 選考状況 -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="・選考状況"
-            android:textSize="14sp" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvCompanyNextDate"
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="選考状況："
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textStatusValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- 次回予定日 -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="・次回予定日"
-            android:textSize="14sp" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvCompanyUrl"
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="次回予定日："
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textNextDateValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- 企業URL -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="・企業URL"
-            android:textSize="14sp" />
+            android:orientation="horizontal">
 
-        <!-- 企業メモ -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="企業URL："
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textUrlValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- 企業メモボタン -->
         <Button
-            android:id="@+id/btnCompanyMemo"
+            android:id="@+id/buttonMemo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
