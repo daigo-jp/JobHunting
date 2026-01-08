@@ -33,6 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -45,6 +48,10 @@ dependencies {
 
     // ▼▼▼ この1行を追加してください ▼▼▼
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    implementation(libs.play.services.pay)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.activity.ktx)
     // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
     testImplementation(libs.junit)
