@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="企業情報"
+            android:text="@string/Company_info"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="12dp"/>
@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="企業名：" />
+                android:text="@string/Company_name" />
 
             <EditText
                 android:id="@+id/editCompanyName"
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="業種：" />
+                android:text="@string/Industry" />
 
             <EditText
                 android:id="@+id/editIndustry"
@@ -75,7 +75,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="所在地：" />
+                android:text="@string/location" />
 
             <EditText
                 android:id="@+id/editLocation"
@@ -92,7 +92,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="選考状況：" />
+                android:text="@string/Selection_status" />
 
             <EditText
                 android:id="@+id/editStatus"
@@ -109,7 +109,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="次回予定日：" />
+                android:text="@string/Next_scheduled_date" />
 
             <EditText
                 android:id="@+id/editNextDate"
@@ -128,7 +128,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="企業URL：" />
+                android:text="@string/Company_URL" />
 
             <EditText
                 android:id="@+id/editUrl"
@@ -141,7 +141,7 @@
             android:id="@+id/buttonMemo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="企業メモ"
+            android:text="@string/button_corporate_memo"
             android:layout_marginTop="16dp"/>
 
         <!-- 下部ボタン -->
@@ -156,7 +156,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="消去"
+                android:text="@string/button_Delete"
                 android:backgroundTint="@android:color/holo_red_light"/>
 
             <Space
@@ -168,7 +168,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="登録"
+                android:text="@string/button_Registration"
                 android:backgroundTint="@android:color/holo_green_dark"/>
         </LinearLayout>
 
