@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <!-- ===== 常時表示 ===== -->
+    <LinearLayout
+        android:id="@+id/layoutCompanyHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- 星（お気に入り） -->
+        <ImageView
+            android:id="@+id/ivFavorite"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="お気に入り"
+            android:padding="2dp"
+            android:src="@android:drawable/btn_star_big_off" />
+
+        <TextView
+            android:id="@+id/tvCompanyName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="会社名"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/ivExpandArrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/arrow_down_float" />
+    </LinearLayout>
+
+    <!-- ===== ドロップダウン ===== -->
+    <LinearLayout
+        android:id="@+id/layoutCompanyDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:visibility="visible">
+
+        <!-- 編集 -->
+        <Button
+            android:id="@+id/btnEditCompany"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:text="編集" />
+
+        <!-- 登録情報表示 -->
+
+        <TextView
+            android:id="@+id/tvCompanyLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="・所在地"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvCompanyStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="・選考状況"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvCompanyNextDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="・次回予定日"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvCompanyUrl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="・企業URL"
+            android:textSize="14sp" />
+
+        <!-- 企業メモ -->
+        <Button
+            android:id="@+id/btnCompanyMemo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="企業メモ" />
+
+    </LinearLayout>
+
+</LinearLayout>
