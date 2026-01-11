@@ -12,9 +12,8 @@ interface CompanyInfoDao {
     suspend fun insert(companyInfo: CompanyInfo): Long
 
     // 特定のユーザーに紐づく企業一覧を取得
-    @Query("SELECT * FROM TBL_company_info WHERE user_ID = :userId")
-    suspend fun getCompaniesByUserId(userId: Long): List<CompanyInfo>
-
+    @Query("SELECT * FROM TBL_company_info")
+    suspend fun getAllCompanies(): List<CompanyInfo>
     @Update
     suspend fun update(companyInfo: CompanyInfo)
 

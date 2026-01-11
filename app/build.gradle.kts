@@ -1,8 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
-
+    id("kotlin-kapt")
 }
 
 android {
@@ -64,6 +63,6 @@ dependencies {
 
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion") // コルーチン用
-    ksp("androidx.room:room-compiler:$roomVersion")       // アノテーション処理 (kaptを使う場合は ksp を kapt に変更)
+    kapt("androidx.room:room-compiler:$roomVersion")
     // === (ここまで) ===
 }
