@@ -1,108 +1,151 @@
 package it.group9.JoubHunting
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-// データクラス（変更なし）
-data class TestMemo(
-    val title: String,
-    val date: String,
-    val content: String
-)
+class MemoListActivity : AppCompatActivity() {
 
-class MemoList : AppCompatActivity() {
+    private lateinit var db: AppDatabase
+    private lateinit var adapter: MemoAdapter
+
+    // 現在選択中の企業IDと、編集中のメモ（新規の場合はnull）
+    private var targetCompanyId: Int = -1
+    private var currentEditingMemo: Memo? = null
+
+    // Viewの参照
+    private lateinit var etContent: EditText
+    private lateinit var tvSelectedTitle: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_memo_list)
 
-        // システムバーの余白調整（元のコードを維持）
-        // ※注意: XMLのルート要素(ConstraintLayout等)に android:id="@+id/main" が必要です
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        // 1. 前の画面から企業IDと名前を受け取る
+        targetCompanyId = intent.getIntExtra("EXTRA_COMPANY_ID", -1)
+        val companyName = intent.getStringExtra("EXTRA_COMPANY_NAME") ?: "企業"
+
+        if (targetCompanyId == -1) {
+            Toast.makeText(this, "エラー: 企業情報が取得できませんでした", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
 
-        // --- ここから追加したロジック ---
+        // タイトル設定
+        findViewById<TextView>(R.id.tvTitle).text = "${companyName} メモ"
 
-        // 1. 表示するデータの作成（ダミーデータ）
-        val memoList = listOf(
-            TestMemo("メモタイトル", "2025/11/11", "11/11のメモ内容です。\nここをクリックすると詳細が表示されます。"),
-            TestMemo("メモタイトル", "2025/11/12", "11/12のメモ内容です。"),
-            TestMemo("メモタイトル", "2025/11/15", "11/15のメモ内容です。"),
-            TestMemo("メモタイトル", "2025/12/22", "12/22のメモ内容です。"),
-            TestMemo("メモタイトル", "2025/11/25", "11/25のメモ内容です。")
-        )
+        // 2. DB初期化
+        db = AppDatabase.getDatabase(this)
 
-        // 2. 画面上のパーツ（View）を取得
-        // ※XML側のIDと一致させてください
+        // 3. Viewの取得
+        etContent = findViewById(R.id.etMemoContent)
+        tvSelectedTitle = findViewById(R.id.tvSelectedTitle)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewMemos)
-        val selectedTitle = findViewById<TextView>(R.id.tvSelectedTitle)
-        val memoContent = findViewById<EditText>(R.id.etMemoContent)
 
-        // 3. アダプターの作成とクリック時の動作定義
-        val adapter = MemoAdapter(memoList) { clickedMemo ->
-            // リストの項目がタップされたときの処理
-            // タイトルに「タイトル (日付)」の形式で表示
-            selectedTitle.text = "${clickedMemo.title} (${clickedMemo.date})"
-            // 入力欄に内容を表示
-            memoContent.setText(clickedMemo.content)
+        // 4. アダプターの設定
+        adapter = MemoAdapter(emptyList()) { clickedMemo ->
+            // リストタップ時の処理：編集モードにする
+            currentEditingMemo = clickedMemo
+            tvSelectedTitle.text = "${clickedMemo.title} (${clickedMemo.date})"
+            etContent.setText(clickedMemo.content)
         }
 
-        // 4. RecyclerViewの設定
-        recyclerView.layoutManager = LinearLayoutManager(this) // リストを縦に並べる
+        recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+
+        // 5. ボタン設定
+        // 保存ボタン
+        findViewById<AppCompatButton>(R.id.btnSave).setOnClickListener {
+            saveMemo()
+        }
+
+        // 消去（削除）ボタン
+        findViewById<AppCompatButton>(R.id.btnDelete).setOnClickListener {
+            deleteMemo()
+        }
+
+        // 新規作成ボタン
+        findViewById<TextView>(R.id.btnCreateNew).setOnClickListener {
+            clearInput()
+            Toast.makeText(this, "新規作成モード", Toast.LENGTH_SHORT).show()
+        }
+
+        // 6. データを読み込む
+        loadMemos()
     }
-}
 
-// --- 以下、アダプタークラス（同じファイル内に追記） ---
-
-class MemoAdapter(
-    private val memos: List<TestMemo>,
-    private val onItemClick: (TestMemo) -> Unit
-) : RecyclerView.Adapter<MemoAdapter.MemoViewHolder>() {
-
-    // 行のレイアウトを読み込む
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
-        // ※ R.layout.item_memo_row が存在することを確認してください
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_memo_row, parent, false)
-        return MemoViewHolder(view)
-    }
-
-    // データをセットする
-    override fun onBindViewHolder(holder: MemoViewHolder, position: Int) {
-        val memo = memos[position]
-        holder.bind(memo)
-
-        // タップリスナーのセット
-        holder.itemView.setOnClickListener {
-            onItemClick(memo)
+    private fun loadMemos() {
+        lifecycleScope.launch {
+            // DBからこの企業のメモだけを取得
+            val memoList = db.memoDao().getMemosByCompanyId(targetCompanyId)
+            adapter.updateData(memoList)
         }
     }
 
-    override fun getItemCount(): Int = memos.size
-
-    // Viewを保持するクラス
-    class MemoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // ※ item_memo_row.xml 内のIDと一致させてください
-        private val titleText: TextView = view.findViewById(R.id.rowTitle)
-        private val dateText: TextView = view.findViewById(R.id.rowDate)
-
-        fun bind(memo: TestMemo) {
-            titleText.text = memo.title
-            dateText.text = memo.date
+    private fun saveMemo() {
+        val content = etContent.text.toString()
+        if (content.isBlank()) {
+            Toast.makeText(this, "内容を入力してください", Toast.LENGTH_SHORT).show()
+            return
         }
+
+        // 今日の日付を取得
+        val currentDate = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date())
+        // タイトルは内容の最初の10文字とする（または適当な名前）
+        val title = if (content.length > 10) content.take(10) + "..." else content
+
+        lifecycleScope.launch {
+            if (currentEditingMemo == null) {
+                // 新規作成
+                val newMemo = Memo(
+                    companyInfoId = targetCompanyId,
+                    title = title,
+                    date = currentDate,
+                    content = content
+                )
+                db.memoDao().insert(newMemo)
+            } else {
+                // 更新（既存のメモを書き換え）
+                val updateMemo = currentEditingMemo!!.copy(
+                    title = title,
+                    date = currentDate, // 更新日を変えるならここ
+                    content = content
+                )
+                db.memoDao().update(updateMemo)
+            }
+
+            // 入力をクリアしてリスト再読み込み
+            clearInput()
+            loadMemos()
+            Toast.makeText(applicationContext, "保存しました", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun deleteMemo() {
+        val target = currentEditingMemo
+        if (target == null) return
+
+        lifecycleScope.launch {
+            db.memoDao().delete(target)
+            clearInput()
+            loadMemos()
+            Toast.makeText(applicationContext, "削除しました", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun clearInput() {
+        currentEditingMemo = null
+        tvSelectedTitle.text = "新規メモ"
+        etContent.setText("")
     }
 }
