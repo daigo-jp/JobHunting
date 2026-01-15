@@ -25,7 +25,7 @@
             android:name=".CreateNote"
             android:exported="false" />
         <activity
-            android:name=".MemoList"
+            android:name=".MemoListActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
