@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.content.Intent
 
 class MemoListActivity : AppCompatActivity() {
 
@@ -74,10 +75,19 @@ class MemoListActivity : AppCompatActivity() {
             deleteMemo()
         }
 
-        // 新規作成ボタン
+        // 修正前
+// 新規作成ボタン
         findViewById<TextView>(R.id.btnCreateNew).setOnClickListener {
             clearInput()
             Toast.makeText(this, "新規作成モード", Toast.LENGTH_SHORT).show()
+        }
+
+// 修正後（画面を飛ばす）
+// 新規作成ボタン
+        findViewById<TextView>(R.id.btnCreateNew).setOnClickListener {
+            // 他の画面（CreateNote）へ移動するための命令を作成
+            val intent = Intent(this, CreateNote::class.java)
+            startActivity(intent)
         }
 
         // 6. データを読み込む
