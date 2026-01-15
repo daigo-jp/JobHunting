@@ -11,9 +11,11 @@ interface CompanyInfoDao {
     @Insert
     suspend fun insert(companyInfo: CompanyInfo): Long
 
-    // 特定のユーザーに紐づく企業一覧を取得
-    @Query("SELECT * FROM TBL_company_info")
+    // ▼ 修正箇所: ORDER BY aspiration_level DESC を追加
+    // DESC は降順（大きい数字→小さい数字）という意味です
+    @Query("SELECT * FROM TBL_company_info ORDER BY aspiration_level DESC")
     suspend fun getAllCompanies(): List<CompanyInfo>
+
     @Update
     suspend fun update(companyInfo: CompanyInfo)
 

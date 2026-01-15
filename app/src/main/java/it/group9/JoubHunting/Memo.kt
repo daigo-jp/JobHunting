@@ -20,6 +20,9 @@ data class Memo(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "memo_ID") val memoId: Int = 0,
 
-    @ColumnInfo(name = "companyinfo_ID", index = true) val companyInfoId: Int, // 外部キー
-    @ColumnInfo(name = "companymemo") val companyMemo: String
+    @ColumnInfo(name = "companyinfo_ID", index = true) val companyInfoId: Int, // どの企業のメモか
+
+    @ColumnInfo(name = "memo_title") val title: String,     // 追加：タイトル
+    @ColumnInfo(name = "memo_date") val date: String,       // 追加：日付
+    @ColumnInfo(name = "companymemo") val content: String   // 内容
 )

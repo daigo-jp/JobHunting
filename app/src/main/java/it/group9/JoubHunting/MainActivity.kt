@@ -40,8 +40,12 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "${company.companyName} を編集", Toast.LENGTH_SHORT).show()
             },
             onMemoClick = { company ->
-                // メモボタンが押された時の処理
-                Toast.makeText(this, "メモ画面へ", Toast.LENGTH_SHORT).show()
+                // ▼▼▼ ここを記述 ▼▼▼
+                val intent = android.content.Intent(this, MemoListActivity::class.java)
+                // どの企業のメモを開くか、IDと名前を渡す
+                intent.putExtra("EXTRA_COMPANY_ID", company.companyId)
+                intent.putExtra("EXTRA_COMPANY_NAME", company.companyName)
+                startActivity(intent)
             }
         )
         recyclerView.adapter = adapter
