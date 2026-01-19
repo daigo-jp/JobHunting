@@ -30,6 +30,8 @@ class MemoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_memo_list)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
         // 1. 前の画面から企業IDと名前を受け取る
         targetCompanyId = intent.getIntExtra("EXTRA_COMPANY_ID", -1)
@@ -82,6 +84,10 @@ class MemoListActivity : AppCompatActivity() {
 
         // 6. データを読み込む
         loadMemos()
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun loadMemos() {
