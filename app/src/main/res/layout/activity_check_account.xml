@@ -111,7 +111,7 @@
         android:layout_height="60dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="#2D8A68"
-        android:text="アカウントを確認する"
+        android:text="ログイン画面に戻る"
         android:textAllCaps="false"
         android:textSize="16sp"
         android:textStyle="bold"
