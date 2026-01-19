@@ -5,21 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:id="@+id/main"
     android:background="@android:color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp">
-
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back_arrow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvHeaderTitle"
@@ -29,22 +21,22 @@
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/btnBack"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btnBack" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/tvSectionUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:text="ユーザー情報"
             android:textColor="@android:color/black"
             android:textSize="22sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnBack" />
+            app:layout_constraintTop_toBottomOf="@id/tvHeaderTitle"
+            android:layout_marginTop="32dp"
+            app:layout_constraintStart_toStartOf="parent" />
+
 
         <ImageView
             android:id="@+id/ivUserIcon"
@@ -181,7 +173,7 @@
             android:layout_marginTop="40dp"
             android:layout_marginBottom="24dp"
             android:backgroundTint="#2D8A68"
-            android:text="登録"
+            android:text="保存"
             app:cornerRadius="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

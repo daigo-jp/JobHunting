@@ -1,10 +1,12 @@
 package it.group9.JoubHunting
 
 import android.os.Bundle
+import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         // ▼ レイアウトファイル名を activity_main に変更
         // (XMLファイルの名前も activity_main.xml になっているか確認してください)
         setContentView(R.layout.activity_main)
+        val userIcon = findViewById<ImageView>(R.id.ivUserProfileIcon)
+        userIcon.setOnClickListener {
+            // プロフィール画面へ遷移
+            val intent = Intent(this, UserProfile::class.java)
+            startActivity(intent)
+        }
 
         // データベースのインスタンス取得
         db = AppDatabase.getDatabase(this)
