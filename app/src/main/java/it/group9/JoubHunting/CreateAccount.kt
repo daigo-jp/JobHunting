@@ -16,6 +16,13 @@ class CreateAccount : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_account)
 
+        // ▼▼▼ 追加: アクションバーに戻るボタンを表示 ▼▼▼
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            title = "アカウント作成" // 必要ならタイトルも設定
+        }
+        // ▲▲▲ 追加ここまで ▲▲▲
+
         db = AppDatabase.getDatabase(this)
 
         val tilLastName = findViewById<TextInputLayout>(R.id.tilLastName)
@@ -70,7 +77,13 @@ class CreateAccount : AppCompatActivity() {
         }
     }
 
-    // ▼▼▼ ここに追加：初期データを登録する関数 ▼▼▼
+    // ▼▼▼ 追加: 戻るボタンが押された時の処理 ▼▼▼
+    override fun onSupportNavigateUp(): Boolean {
+        finish() // 現在の画面を閉じて前の画面に戻る
+        return true
+    }
+    // ▲▲▲ 追加ここまで ▲▲▲
+
     private suspend fun createInitialDataForUser(userId: Long) {
         val companies = listOf(
             CompanyInfo(

@@ -17,6 +17,9 @@ interface UserDao {
     @Query("SELECT * FROM MST_user WHERE email = :email LIMIT 1")
     suspend fun getUserByEmail(email: String): User?
 
+    @Query("SELECT * FROM MST_user WHERE user_ID = :id LIMIT 1")
+    suspend fun getUser(id: Long): User?
+
     @Update
     suspend fun update(user: User)
 
