@@ -98,7 +98,8 @@
             <EditText
                 android:id="@+id/editCompanyName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="text" />
         </LinearLayout>
 
         <!-- 業種 -->
@@ -115,7 +116,8 @@
             <EditText
                 android:id="@+id/editIndustry"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="text" />
         </LinearLayout>
 
         <!-- 所在地 -->
@@ -132,7 +134,8 @@
             <EditText
                 android:id="@+id/editLocation"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="text" />
         </LinearLayout>
 
         <!-- 選考状況 -->
@@ -149,7 +152,8 @@
             <EditText
                 android:id="@+id/editStatus"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="text" />
         </LinearLayout>
 
         <!-- 次回予定日 -->
@@ -167,8 +171,9 @@
                 android:id="@+id/editNextDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:drawableEnd="@android:drawable/ic_menu_my_calendar"/>
+                android:clickable="true"
+                android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+                android:hint="日付を選択" />
         </LinearLayout>
 
         <!-- 企業URL -->
@@ -185,7 +190,8 @@
             <EditText
                 android:id="@+id/editUrl"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:inputType="text" />
         </LinearLayout>
 
         <!-- 企業メモ -->

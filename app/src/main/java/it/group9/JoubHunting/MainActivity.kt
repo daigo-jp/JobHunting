@@ -14,6 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,7 +61,12 @@ class MainActivity : AppCompatActivity() {
         adapter = CompanyAdapter(
             companyList = emptyList(),
             onEditClick = { company ->
-                Toast.makeText(this, "${company.companyName} を編集", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, CompanyEdit::class.java)
+
+                // 編集に必要な情報を渡す（最低限ID）
+                intent.putExtra("EXTRA_COMPANY_ID", company.companyId)
+
+                startActivity(intent)
             },
             onMemoClick = { company ->
                 val intent = Intent(this, MemoListActivity::class.java)

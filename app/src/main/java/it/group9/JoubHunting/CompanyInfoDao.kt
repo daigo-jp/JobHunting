@@ -17,6 +17,8 @@ interface CompanyInfoDao {
     suspend fun getAllCompanies(): List<CompanyInfo>
     @Query("SELECT * FROM TBL_company_info WHERE user_ID = :userId ORDER BY aspiration_level DESC")
     suspend fun getCompaniesByUserId(userId: Long): List<CompanyInfo>
+    @Query("SELECT * FROM TBL_company_info WHERE company_ID = :companyId")
+    suspend fun getCompanyById(companyId: Int): CompanyInfo?
     @Update
     suspend fun update(companyInfo: CompanyInfo)
 

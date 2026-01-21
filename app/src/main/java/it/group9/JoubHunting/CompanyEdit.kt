@@ -1,10 +1,13 @@
 package it.group9.JoubHunting
 
-import android.content.Intent
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class CompanyEdit : AppCompatActivity() {
 
@@ -14,45 +17,71 @@ class CompanyEdit : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_company_edit)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val editNextDate = findViewById<EditText>(R.id.editNextDate)
+
+        val buttonMemo = findViewById<Button>(R.id.buttonMemo)
+
+
+
+        editNextDate.setOnClickListener {
+            val calendar = Calendar.getInstance()
+
+            DatePickerDialog(
+                this,
+                { _, year, month, dayOfMonth ->
+                    val date = "%04d-%02d-%02d".format(year, month + 1, dayOfMonth)
+                    editNextDate.setText(date)
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            ).show()
+        }
+
+
 
         // --- View取得 ---
         val editCompanyName = findViewById<EditText>(R.id.editCompanyName)
         val editIndustry = findViewById<EditText>(R.id.editIndustry)
         val editLocation = findViewById<EditText>(R.id.editLocation)
         val editStatus = findViewById<EditText>(R.id.editStatus)
-        val editNextDate = findViewById<EditText>(R.id.editNextDate)
         val editUrl = findViewById<EditText>(R.id.editUrl)
 
         val buttonSave = findViewById<Button>(R.id.buttonSave)
         val buttonDelete = findViewById<Button>(R.id.buttonDelete)
 
-        // --- Intentから企業IDを受け取る ---
-        companyId = intent.getIntExtra("COMPANY_ID", -1)
+        // --- DB取得 ---
+        val db = AppDatabase.getDatabase(this)
 
-        /*
-         ======================================
-         ★ DB参照処理（ここだけ変更すればOK）
-         ======================================
-         ・DBクラス名
-         ・取得メソッド名
-         ・戻り値の型
-         が変わったらこのブロックのみ修正
-         */
+        // --- Intentから企業IDを取得 ---
+        companyId = intent.getIntExtra("EXTRA_COMPANY_ID", -1)
 
-        if (companyId != -1) {
-            // val db = CompanyDatabase(this)
-            // val company = db.getCompanyById(companyId)
-
-            // ---- 取得したデータを画面に反映 ----
-            // editCompanyName.setText(company.name)
-            // editIndustry.setText(company.industry)
-            // editLocation.setText(company.location)
-            // editStatus.setText(company.status)
-            // editNextDate.setText(company.nextDate)
-            // editUrl.setText(company.url)
+        if (companyId == -1) {
+            finish()
+            return
         }
 
-        // --- 保存（上書き） ---
+        // =========================
+        // 企業情報をDBから取得して表示
+        // =========================
+        lifecycleScope.launch {
+            val company = db.companyInfoDao().getCompanyById(companyId)
+
+            company?.let {
+                editCompanyName.setText(it.companyName)
+                editIndustry.setText(it.industry)
+                editLocation.setText(it.location)
+                editStatus.setText(it.selectionStatus ?: "")
+                editNextDate.setText(it.nextScheduledDate ?: "")
+                editUrl.setText(it.companyUrl ?: "")
+            }
+        }
+
+        // =========================
+        // 保存（更新）
+        // =========================
         buttonSave.setOnClickListener {
 
             val companyName = editCompanyName.text.toString()
@@ -62,37 +91,47 @@ class CompanyEdit : AppCompatActivity() {
             val nextDate = editNextDate.text.toString()
             val url = editUrl.text.toString()
 
-            /*
-             ======================================
-             ★ DB更新処理（ここだけ変更すればOK）
-             ======================================
-             ・update メソッド名
-             ・引数
-             が変わったらこのブロックのみ修正
-             */
+            lifecycleScope.launch {
 
-            if (companyId != -1) {
-                // val db = CompanyDatabase(this)
-                // db.updateCompany(
-                //     companyId,
-                //     companyName,
-                //     industry,
-                //     location,
-                //     status,
-                //     nextDate,
-                //     url
-                // )
+                val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                    .getLong("userId", -1L)
+
+                val updatedCompany = CompanyInfo(
+                    companyId = companyId,
+                    companyName = companyName,
+                    industry = industry,
+                    location = location,
+                    selectionStatus = if (status.isBlank()) null else status,
+                    aspirationLevel = 0, // 必要なら取得済みデータを使ってもOK
+                    nextScheduledDate = if (nextDate.isBlank()) null else nextDate,
+                    companyUrl = if (url.isBlank()) null else url,
+                    userId = userId
+                )
+
+                db.companyInfoDao().update(updatedCompany)
+                finish()
             }
-
-            // --- 一覧画面へ戻る ---
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
         }
 
-        // --- 削除（任意・未実装でもOK） ---
+        // =========================
+        // 削除
+        // =========================
         buttonDelete.setOnClickListener {
-            finish()
+            lifecycleScope.launch {
+                val company = db.companyInfoDao().getCompanyById(companyId)
+                company?.let {
+                    db.companyInfoDao().delete(it)
+                }
+                finish()
+            }
         }
+
+
+    }
+
+    // ← 戻るボタン対応（任意）
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }
