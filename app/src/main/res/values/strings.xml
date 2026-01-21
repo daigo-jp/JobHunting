@@ -36,4 +36,24 @@
     <string name="button_create">作成</string>
     <string name="description_back">戻る</string>
 
+    <!-- CompanyList -->
+    <string name="title_companyList">企業一覧</string>
+    <string name="button_Registration">登録</string>
+    <string name="button_edit">編集：</string>
+    <string name="Selection_status">選考状況:</string>
+    <string name="location">所在地：</string>
+    <string name="Next_scheduled_date">次回予定日：</string>
+    <string name="Company_URL">企業URL：</string>
+    <string name="button_corporate_memo">企業メモ</string>
+
+    <!-- Companyedit -->
+    <string name="title_CompanyEdit">企業編集</string>
+    <string name="Company_info">企業情報</string>
+    <string name="button_Delete">消去</string>
+    <string name="Company_name">企業名：</string>
+    <string name="Industry">業種：</string>
+
+
+
+
 </resources>
