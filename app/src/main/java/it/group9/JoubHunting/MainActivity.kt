@@ -44,7 +44,8 @@ class MainActivity : AppCompatActivity() {
         // ユーザーアイコン設定
         val userIcon = findViewById<ImageView>(R.id.ivUserProfileIcon)
         userIcon.setOnClickListener {
-            val intent = Intent(this, UserProfile::class.java) // UserProfileActivityの場合は名前に注意
+            val intent = Intent(this, UserProfile::class.java)
+            intent.putExtra("EXTRA_USER_ID", userId)
             startActivity(intent)
         }
 
