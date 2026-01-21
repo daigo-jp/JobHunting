@@ -1,7 +1,8 @@
 package it.group9.JoubHunting
 
-import android.os.Bundle
+import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
@@ -14,22 +15,36 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 
-// ▼ クラス名を MainActivity に変更
 class MainActivity : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
     private lateinit var adapter: CompanyAdapter
-    private var userId: Long = 1L // ※本来はログイン画面から受け取ったIDを使います
+
+    // ▼ 変更点1：初期値を無効な値(-1)にしておく（ログイン判定で上書きするため）
+    private var userId: Long = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // ▼ レイアウトファイル名を activity_main に変更
-        // (XMLファイルの名前も activity_main.xml になっているか確認してください)
+
+        // ▼ 変更点2：ログイン状態と同時に「ユーザーID」も取り出す
+        val sharedPref = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
+        userId = sharedPref.getLong("userId", -1L) // 保存されたIDを取得
+
+        // IDが -1 (取得失敗) の場合もログイン画面に戻すように修正
+        if (!isLoggedIn || userId == -1L) {
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
         setContentView(R.layout.activity_main)
+
+        // ユーザーアイコン設定
         val userIcon = findViewById<ImageView>(R.id.ivUserProfileIcon)
         userIcon.setOnClickListener {
-            // プロフィール画面へ遷移
-            val intent = Intent(this, UserProfile::class.java)
+            val intent = Intent(this, UserProfile::class.java) // UserProfileActivityの場合は名前に注意
             startActivity(intent)
         }
 
@@ -42,15 +57,12 @@ class MainActivity : AppCompatActivity() {
 
         // Adapterの初期化
         adapter = CompanyAdapter(
-            companyList = emptyList(), // 最初は空
+            companyList = emptyList(),
             onEditClick = { company ->
-                // 編集ボタンが押された時の処理（画面遷移など）
                 Toast.makeText(this, "${company.companyName} を編集", Toast.LENGTH_SHORT).show()
             },
             onMemoClick = { company ->
-                // ▼▼▼ ここを記述 ▼▼▼
-                val intent = android.content.Intent(this, MemoListActivity::class.java)
-                // どの企業のメモを開くか、IDと名前を渡す
+                val intent = Intent(this, MemoListActivity::class.java)
                 intent.putExtra("EXTRA_COMPANY_ID", company.companyId)
                 intent.putExtra("EXTRA_COMPANY_NAME", company.companyName)
                 startActivity(intent)
@@ -58,54 +70,40 @@ class MainActivity : AppCompatActivity() {
         )
         recyclerView.adapter = adapter
 
-        // 検索機能の設定
         setupSearch()
 
-        // 登録ボタンの設定
         findViewById<Button>(R.id.btnGoRegister).setOnClickListener {
-            // 登録画面への遷移処理をここに書く
-            // val intent = Intent(this, RegisterActivity::class.java)
-            // startActivity(intent)
+            // 企業登録画面への遷移処理（必要であれば記述）
+            // startActivity(Intent(this, RegisterCompanyActivity::class.java))
         }
     }
 
     override fun onResume() {
         super.onResume()
-        // 画面が表示されるたびにデータを再取得（登録画面から戻ってきた時など）
         loadCompanyData()
     }
 
     // データベースから企業一覧を取得
     private fun loadCompanyData() {
         lifecycleScope.launch {
-            // 【変更】ID指定をやめて、全件取得してみる
-            // val companies = db.companyInfoDao().getCompaniesByUserId(userId)
-            val companies = db.companyInfoDao().getAllCompanies()
+            // ▼ 変更点3：自分のIDのデータだけを取得するメソッドに戻す
+            // ※ CompanyInfoDao に getCompaniesByUserId がある前提です
+            val companies = db.companyInfoDao().getCompaniesByUserId(userId)
 
-            // 【追加】ログを出力して、データが何件取れたか確認する
-            // Logcatタブで "CHECK_DATA" と検索すると見れます
-            android.util.Log.d("CHECK_DATA", "取得した件数: ${companies.size}")
-            companies.forEach {
-                android.util.Log.d("CHECK_DATA", "企業名: ${it.companyName}")
-            }
+            // ログで確認（userIdが正しく取れているかチェックできます）
+            android.util.Log.d("CHECK_DATA", "ログイン中ID: $userId, 取得件数: ${companies.size}")
 
-            // Adapterにデータを渡して更新
             adapter.updateData(companies)
         }
     }
 
-    // 検索バーの文字入力を監視する設定
     private fun setupSearch() {
         val searchEditText = findViewById<EditText>(R.id.etCompanySearch)
-
         searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // 文字が入力されるたびにフィルターを実行
                 adapter.filter(s.toString())
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
     }
