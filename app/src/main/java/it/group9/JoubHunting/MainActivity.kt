@@ -85,6 +85,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
     override fun onResume() {
         super.onResume()
         loadCompanyData()
@@ -95,7 +97,10 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             // ▼ 変更点3：自分のIDのデータだけを取得するメソッドに戻す
             // ※ CompanyInfoDao に getCompaniesByUserId がある前提です
-            val companies = db.companyInfoDao().getCompaniesByUserId(userId)
+           // val companies = db.companyInfoDao().getCompaniesByUserId(userId)
+            val companies = withContext(Dispatchers.IO) {
+                db.companyInfoDao().getCompaniesByUserId(userId)
+            }
 
             // ログで確認（userIdが正しく取れているかチェックできます）
             android.util.Log.d("CHECK_DATA", "ログイン中ID: $userId, 取得件数: ${companies.size}")
@@ -114,4 +119,6 @@ class MainActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
     }
+
+
 }

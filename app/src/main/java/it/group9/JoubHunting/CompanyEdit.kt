@@ -4,8 +4,10 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -13,6 +15,15 @@ class CompanyEdit : AppCompatActivity() {
 
     /** 編集対象の企業ID */
     private var companyId: Int = -1
+
+    private lateinit var stars: List<ImageView>
+    private var priority = 0
+
+    private lateinit var adapter: CompanyAdapter
+    private var userId: Long = -1L
+
+    // --- DB取得 ---
+    val db = AppDatabase.getDatabase(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +34,24 @@ class CompanyEdit : AppCompatActivity() {
 
         val buttonMemo = findViewById<Button>(R.id.buttonMemo)
 
+        stars = listOf(
+            findViewById(R.id.star1),
+            findViewById(R.id.star2),
+            findViewById(R.id.star3),
+            findViewById(R.id.star4),
+            findViewById(R.id.star5)
+        )
+
+        stars.forEachIndexed { index, star ->
+            star.setOnClickListener {
+
+                updateStarUI(index) // UIだけ
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    db.companyInfoDao().updatePriority(companyId, index + 1)
+                }
+            }
+        }
 
 
         editNextDate.setOnClickListener {
@@ -127,6 +156,19 @@ class CompanyEdit : AppCompatActivity() {
         }
 
 
+    }
+
+
+
+
+    private fun updateStarUI(selected: Int) {
+        stars.forEachIndexed { index, imageView ->
+            if (index <= selected) {
+                imageView.setImageResource(R.drawable.ic_star_filled)
+            } else {
+                imageView.setImageResource(R.drawable.ic_star_outline)
+            }
+        }
     }
 
     // ← 戻るボタン対応（任意）
