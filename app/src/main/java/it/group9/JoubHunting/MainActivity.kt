@@ -20,18 +20,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var db: AppDatabase
     private lateinit var adapter: CompanyAdapter
 
-    // ▼ 変更点1：初期値を無効な値(-1)にしておく（ログイン判定で上書きするため）
+    // 初期値を無効な値(-1)にしておく
     private var userId: Long = -1L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ▼ 変更点2：ログイン状態と同時に「ユーザーID」も取り出す
+        // ログイン状態とユーザーIDの確認
         val sharedPref = getSharedPreferences("AppPrefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPref.getBoolean("isLoggedIn", false)
-        userId = sharedPref.getLong("userId", -1L) // 保存されたIDを取得
+        userId = sharedPref.getLong("userId", -1L)
 
-        // IDが -1 (取得失敗) の場合もログイン画面に戻すように修正
+        // 未ログインまたはID取得失敗時はログイン画面へ
         if (!isLoggedIn || userId == -1L) {
             val intent = Intent(this, Login::class.java)
             startActivity(intent)
@@ -60,13 +60,19 @@ class MainActivity : AppCompatActivity() {
         adapter = CompanyAdapter(
             companyList = emptyList(),
             onEditClick = { company ->
+                // 編集ボタンの処理（必要に応じて実装）
                 Toast.makeText(this, "${company.companyName} を編集", Toast.LENGTH_SHORT).show()
             },
             onMemoClick = { company ->
+                // メモ画面への遷移
                 val intent = Intent(this, MemoListActivity::class.java)
                 intent.putExtra("EXTRA_COMPANY_ID", company.companyId)
                 intent.putExtra("EXTRA_COMPANY_NAME", company.companyName)
                 startActivity(intent)
+            },
+            // ▼▼▼ 追加: お気に入りボタンが押された時の処理 ▼▼▼
+            onFavoriteClick = { company ->
+                toggleFavorite(company)
             }
         )
         recyclerView.adapter = adapter
@@ -87,14 +93,25 @@ class MainActivity : AppCompatActivity() {
     // データベースから企業一覧を取得
     private fun loadCompanyData() {
         lifecycleScope.launch {
-            // ▼ 変更点3：自分のIDのデータだけを取得するメソッドに戻す
-            // ※ CompanyInfoDao に getCompaniesByUserId がある前提です
+            // DAOで「お気に入り順 > 志望度順」にソートされたデータを取得
             val companies = db.companyInfoDao().getCompaniesByUserId(userId)
 
-            // ログで確認（userIdが正しく取れているかチェックできます）
             android.util.Log.d("CHECK_DATA", "ログイン中ID: $userId, 取得件数: ${companies.size}")
-
             adapter.updateData(companies)
+        }
+    }
+
+    // ▼▼▼ 追加: お気に入りの切り替え処理 ▼▼▼
+    private fun toggleFavorite(company: CompanyInfo) {
+        lifecycleScope.launch {
+            // 現在の状態を反転 (true⇔false) させた新しいデータを作成
+            val updatedCompany = company.copy(isFavorite = !company.isFavorite)
+
+            // データベースを更新
+            db.companyInfoDao().update(updatedCompany)
+
+            // リストを再読み込み（並び順を反映させるため）
+            loadCompanyData()
         }
     }
 
