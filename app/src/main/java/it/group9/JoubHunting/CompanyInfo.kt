@@ -27,7 +27,11 @@ data class CompanyInfo(
     @ColumnInfo(name = "aspiration_level") val aspirationLevel: Int,
     @ColumnInfo(name = "next_scheduled_date") val nextScheduledDate: String?, // DATETIME -> String
     @ColumnInfo(name = "companyURL") val companyUrl: String?,
+<<<<<<< HEAD
     @ColumnInfo(name = "priority") val priority: Int = 0,
+=======
+    @ColumnInfo(name = "is_favorite") val isFavorite: Boolean = false,
+>>>>>>> 82e7e1aacba6ec21620643cc6ffe001edb95a5a8
 
     @ColumnInfo(name = "user_ID", index = true) val userId: Long // 外部キー
 )

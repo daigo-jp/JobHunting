@@ -16,7 +16,7 @@ interface CompanyInfoDao {
     // DESC は降順（大きい数字→小さい数字）という意味です
     @Query("SELECT * FROM TBL_company_info ORDER BY aspiration_level DESC")
     suspend fun getAllCompanies(): List<CompanyInfo>
-    @Query("SELECT * FROM TBL_company_info WHERE user_ID = :userId ORDER BY aspiration_level DESC")
+    @Query("SELECT * FROM TBL_company_info WHERE user_ID = :userId ORDER BY is_favorite DESC, aspiration_level DESC")
     suspend fun getCompaniesByUserId(userId: Long): List<CompanyInfo>
     @Query("SELECT * FROM TBL_company_info WHERE company_ID = :companyId")
     suspend fun getCompanyById(companyId: Int): CompanyInfo?

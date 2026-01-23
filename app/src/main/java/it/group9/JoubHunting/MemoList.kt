@@ -33,7 +33,6 @@ class MemoListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_memo_list)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-
         // 1. 前の画面から企業IDと名前を受け取る
         targetCompanyId = intent.getIntExtra("EXTRA_COMPANY_ID", -1)
         val companyName = intent.getStringExtra("EXTRA_COMPANY_NAME") ?: "企業"
@@ -57,7 +56,7 @@ class MemoListActivity : AppCompatActivity() {
 
         // 4. アダプターの設定
         adapter = MemoAdapter(emptyList()) { clickedMemo ->
-            // リストタップ時の処理：編集モードにする
+            // リストタップ時の処理：簡易編集モード（既存機能）
             currentEditingMemo = clickedMemo
             tvSelectedTitle.text = "${clickedMemo.title} (${clickedMemo.date})"
             etContent.setText(clickedMemo.content)
@@ -67,7 +66,7 @@ class MemoListActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         // 5. ボタン設定
-        // 保存ボタン
+        // 簡易保存ボタン（この画面で編集した場合用）
         findViewById<AppCompatButton>(R.id.btnSave).setOnClickListener {
             saveMemo()
         }
@@ -77,24 +76,23 @@ class MemoListActivity : AppCompatActivity() {
             deleteMemo()
         }
 
-        // 修正前
-// 新規作成ボタン
+        // ★修正ポイント：新規作成ボタン（画面遷移）
         findViewById<TextView>(R.id.btnCreateNew).setOnClickListener {
-            clearInput()
-            Toast.makeText(this, "新規作成モード", Toast.LENGTH_SHORT).show()
-        }
-
-// 修正後（画面を飛ばす）
-// 新規作成ボタン
-        findViewById<TextView>(R.id.btnCreateNew).setOnClickListener {
-            // 他の画面（CreateNote）へ移動するための命令を作成
             val intent = Intent(this, CreateNote::class.java)
+            // 企業IDというバトンを渡す
+            intent.putExtra("EXTRA_COMPANY_ID", targetCompanyId)
             startActivity(intent)
         }
 
-        // 6. データを読み込む
+        // ★注意: onCreate内での loadMemos() は削除しました
+    }
+
+    // ★修正ポイント：画面に戻ってきたときにリストを更新する仕組み
+    override fun onResume() {
+        super.onResume()
         loadMemos()
     }
+
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
@@ -102,11 +100,13 @@ class MemoListActivity : AppCompatActivity() {
 
     private fun loadMemos() {
         lifecycleScope.launch {
-            // DBからこの企業のメモだけを取得
+            // DBからこの企業のメモだけを取得してリストを更新
             val memoList = db.memoDao().getMemosByCompanyId(targetCompanyId)
             adapter.updateData(memoList)
         }
     }
+
+    // --- 以下、既存の簡易編集機能（この画面内で編集する場合に使用） ---
 
     private fun saveMemo() {
         val content = etContent.text.toString()
@@ -115,14 +115,12 @@ class MemoListActivity : AppCompatActivity() {
             return
         }
 
-        // 今日の日付を取得
         val currentDate = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date())
-        // タイトルは内容の最初の10文字とする（または適当な名前）
         val title = if (content.length > 10) content.take(10) + "..." else content
 
         lifecycleScope.launch {
             if (currentEditingMemo == null) {
-                // 新規作成
+                // この画面で直接新規作成する場合（予備機能）
                 val newMemo = Memo(
                     companyInfoId = targetCompanyId,
                     title = title,
@@ -131,16 +129,14 @@ class MemoListActivity : AppCompatActivity() {
                 )
                 db.memoDao().insert(newMemo)
             } else {
-                // 更新（既存のメモを書き換え）
+                // 既存メモの更新
                 val updateMemo = currentEditingMemo!!.copy(
                     title = title,
-                    date = currentDate, // 更新日を変えるならここ
+                    date = currentDate,
                     content = content
                 )
                 db.memoDao().update(updateMemo)
             }
-
-            // 入力をクリアしてリスト再読み込み
             clearInput()
             loadMemos()
             Toast.makeText(applicationContext, "保存しました", Toast.LENGTH_SHORT).show()
