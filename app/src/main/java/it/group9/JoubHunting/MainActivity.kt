@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
+//todo 志望度機能、メモ画面遷移、
 class MainActivity : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
@@ -62,17 +62,11 @@ class MainActivity : AppCompatActivity() {
         adapter = CompanyAdapter(
             companyList = emptyList(),
             onEditClick = { company ->
-<<<<<<< HEAD
+                // ★コンフリクト解消箇所1: 編集画面への遷移コード(HEAD)を採用
                 val intent = Intent(this, CompanyEdit::class.java)
-
                 // 編集に必要な情報を渡す（最低限ID）
                 intent.putExtra("EXTRA_COMPANY_ID", company.companyId)
-
                 startActivity(intent)
-=======
-                // 編集ボタンの処理（必要に応じて実装）
-                Toast.makeText(this, "${company.companyName} を編集", Toast.LENGTH_SHORT).show()
->>>>>>> 82e7e1aacba6ec21620643cc6ffe001edb95a5a8
             },
             onMemoClick = { company ->
                 // メモ画面への遷移
@@ -96,8 +90,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
     override fun onResume() {
         super.onResume()
         loadCompanyData()
@@ -106,17 +98,11 @@ class MainActivity : AppCompatActivity() {
     // データベースから企業一覧を取得
     private fun loadCompanyData() {
         lifecycleScope.launch {
-<<<<<<< HEAD
-            // ▼ 変更点3：自分のIDのデータだけを取得するメソッドに戻す
-            // ※ CompanyInfoDao に getCompaniesByUserId がある前提です
-           // val companies = db.companyInfoDao().getCompaniesByUserId(userId)
+            // ★コンフリクト解消箇所2: 安全なスレッド処理(HEAD)を採用
+            // ※DAOの中身が「お気に入り順」になっていれば、この呼び出しで正しくソートされます
             val companies = withContext(Dispatchers.IO) {
                 db.companyInfoDao().getCompaniesByUserId(userId)
             }
-=======
-            // DAOで「お気に入り順 > 志望度順」にソートされたデータを取得
-            val companies = db.companyInfoDao().getCompaniesByUserId(userId)
->>>>>>> 82e7e1aacba6ec21620643cc6ffe001edb95a5a8
 
             android.util.Log.d("CHECK_DATA", "ログイン中ID: $userId, 取得件数: ${companies.size}")
             adapter.updateData(companies)
@@ -147,9 +133,4 @@ class MainActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 82e7e1aacba6ec21620643cc6ffe001edb95a5a8
 }

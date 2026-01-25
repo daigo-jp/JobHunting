@@ -22,12 +22,6 @@ interface CompanyInfoDao {
     suspend fun getCompanyById(companyId: Int): CompanyInfo?
     @Update
     suspend fun update(companyInfo: CompanyInfo)
-    @Query("""
-    UPDATE TBL_company_info
-    SET priority = :priority
-    WHERE company_ID = :companyId
-""")
-    suspend fun updatePriority(companyId: Int, priority: Int)
 
 
     @Delete

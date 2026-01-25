@@ -9,31 +9,51 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class CompanyEdit : AppCompatActivity() {
 
-    /** 編集対象の企業ID */
     private var companyId: Int = -1
-
     private lateinit var stars: List<ImageView>
-    private var priority = 0
 
-    private lateinit var adapter: CompanyAdapter
-    private var userId: Long = -1L
+    // 修正: 'priority' ではなく 'currentAspirationLevel' として管理 (初期値0)
+    private var currentAspirationLevel: Int = 0
 
-    // --- DB取得 ---
-    val db = AppDatabase.getDatabase(this)
+    // DBインスタンス (onCreate内で重複していたのをメンバ変数に統一)
+    private lateinit var db: AppDatabase
+
+    // 保存時に既存のデータを保持するために一時保存する変数
+    private var originalCompany: CompanyInfo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_company_edit)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // DB初期化
+        db = AppDatabase.getDatabase(this)
+
+        // --- Intentから企業IDを取得 ---
+        companyId = intent.getIntExtra("EXTRA_COMPANY_ID", -1)
+        if (companyId == -1) {
+            finish()
+            return
+        }
+
+        // --- View取得 ---
+        val editCompanyName = findViewById<EditText>(R.id.editCompanyName)
+        val editIndustry = findViewById<EditText>(R.id.editIndustry)
+        val editLocation = findViewById<EditText>(R.id.editLocation)
+        val editStatus = findViewById<EditText>(R.id.editStatus)
+        val editUrl = findViewById<EditText>(R.id.editUrl)
         val editNextDate = findViewById<EditText>(R.id.editNextDate)
 
-        val buttonMemo = findViewById<Button>(R.id.buttonMemo)
+        val buttonSave = findViewById<Button>(R.id.buttonSave)
+        val buttonDelete = findViewById<Button>(R.id.buttonDelete)
+        // val buttonMemo = findViewById<Button>(R.id.buttonMemo) // 使われていないようなのでコメントアウト
 
+        // --- 星アイコンの設定 ---
         stars = listOf(
             findViewById(R.id.star1),
             findViewById(R.id.star2),
@@ -44,19 +64,21 @@ class CompanyEdit : AppCompatActivity() {
 
         stars.forEachIndexed { index, star ->
             star.setOnClickListener {
+                // 星をクリックした時の処理
+                // indexは0始まりなので、レベルは +1 する (例: 1つ目の星=レベル1)
+                currentAspirationLevel = index + 1
 
-                updateStarUI(index) // UIだけ
+                // UIを更新
+                updateStarUI(index)
 
-                lifecycleScope.launch(Dispatchers.IO) {
-                    db.companyInfoDao().updatePriority(companyId, index + 1)
-                }
+                // 修正: ここで updatePriority を呼ぶのは削除しました。
+                // 理由: 「保存」ボタンを押した時に他の項目と一緒にまとめて保存するためです。
             }
         }
 
-
+        // --- 日付選択ダイアログ ---
         editNextDate.setOnClickListener {
             val calendar = Calendar.getInstance()
-
             DatePickerDialog(
                 this,
                 { _, year, month, dayOfMonth ->
@@ -69,42 +91,29 @@ class CompanyEdit : AppCompatActivity() {
             ).show()
         }
 
-
-
-        // --- View取得 ---
-        val editCompanyName = findViewById<EditText>(R.id.editCompanyName)
-        val editIndustry = findViewById<EditText>(R.id.editIndustry)
-        val editLocation = findViewById<EditText>(R.id.editLocation)
-        val editStatus = findViewById<EditText>(R.id.editStatus)
-        val editUrl = findViewById<EditText>(R.id.editUrl)
-
-        val buttonSave = findViewById<Button>(R.id.buttonSave)
-        val buttonDelete = findViewById<Button>(R.id.buttonDelete)
-
-        // --- DB取得 ---
-        val db = AppDatabase.getDatabase(this)
-
-        // --- Intentから企業IDを取得 ---
-        companyId = intent.getIntExtra("EXTRA_COMPANY_ID", -1)
-
-        if (companyId == -1) {
-            finish()
-            return
-        }
-
         // =========================
         // 企業情報をDBから取得して表示
         // =========================
         lifecycleScope.launch {
-            val company = db.companyInfoDao().getCompanyById(companyId)
+            // IOスレッドで取得
+            val company = withContext(Dispatchers.IO) {
+                db.companyInfoDao().getCompanyById(companyId)
+            }
 
             company?.let {
+                originalCompany = it // 更新用に保持
+
                 editCompanyName.setText(it.companyName)
                 editIndustry.setText(it.industry)
                 editLocation.setText(it.location)
                 editStatus.setText(it.selectionStatus ?: "")
                 editNextDate.setText(it.nextScheduledDate ?: "")
                 editUrl.setText(it.companyUrl ?: "")
+
+                // 修正: DBから取得した aspirationLevel を反映
+                currentAspirationLevel = it.aspirationLevel
+                // 星の表示を更新 (レベルが3なら、インデックス2までを光らせる)
+                updateStarUI(currentAspirationLevel - 1)
             }
         }
 
@@ -112,7 +121,6 @@ class CompanyEdit : AppCompatActivity() {
         // 保存（更新）
         // =========================
         buttonSave.setOnClickListener {
-
             val companyName = editCompanyName.text.toString()
             val industry = editIndustry.text.toString()
             val location = editLocation.text.toString()
@@ -121,23 +129,24 @@ class CompanyEdit : AppCompatActivity() {
             val url = editUrl.text.toString()
 
             lifecycleScope.launch {
+                // 既存のデータがあればそれをベースにする（IDやお気に入りフラグ等を消さないため）
+                val baseCompany = originalCompany ?: return@launch
 
-                val userId = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-                    .getLong("userId", -1L)
-
-                val updatedCompany = CompanyInfo(
-                    companyId = companyId,
+                val updatedCompany = baseCompany.copy(
                     companyName = companyName,
                     industry = industry,
                     location = location,
                     selectionStatus = if (status.isBlank()) null else status,
-                    aspirationLevel = 0, // 必要なら取得済みデータを使ってもOK
+                    // 修正: 星で選択された currentAspirationLevel をセット
+                    aspirationLevel = currentAspirationLevel,
                     nextScheduledDate = if (nextDate.isBlank()) null else nextDate,
-                    companyUrl = if (url.isBlank()) null else url,
-                    userId = userId
+                    companyUrl = if (url.isBlank()) null else url
+                    // userId や companyId は copy 元の baseCompany のものが維持されます
                 )
 
-                db.companyInfoDao().update(updatedCompany)
+                withContext(Dispatchers.IO) {
+                    db.companyInfoDao().update(updatedCompany)
+                }
                 finish()
             }
         }
@@ -147,31 +156,29 @@ class CompanyEdit : AppCompatActivity() {
         // =========================
         buttonDelete.setOnClickListener {
             lifecycleScope.launch {
-                val company = db.companyInfoDao().getCompanyById(companyId)
-                company?.let {
-                    db.companyInfoDao().delete(it)
+                val company = originalCompany ?: return@launch
+                withContext(Dispatchers.IO) {
+                    db.companyInfoDao().delete(company)
                 }
                 finish()
             }
         }
-
-
     }
 
-
-
-
-    private fun updateStarUI(selected: Int) {
+    /**
+     * 星の見た目を更新する関数
+     * @param selectedIndex 選択された星のインデックス (0~4)。-1の場合はすべてオフ。
+     */
+    private fun updateStarUI(selectedIndex: Int) {
         stars.forEachIndexed { index, imageView ->
-            if (index <= selected) {
-                imageView.setImageResource(R.drawable.ic_star_filled)
+            if (index <= selectedIndex) {
+                imageView.setImageResource(R.drawable.ic_star_filled) // 光っている星画像
             } else {
-                imageView.setImageResource(R.drawable.ic_star_outline)
+                imageView.setImageResource(R.drawable.ic_star_outline) // 枠だけの星画像
             }
         }
     }
 
-    // ← 戻るボタン対応（任意）
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return true
