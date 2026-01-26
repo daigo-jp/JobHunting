@@ -1,5 +1,6 @@
 package it.group9.JoubHunting
 
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -17,8 +18,11 @@ interface CompanyInfoDao {
     suspend fun getAllCompanies(): List<CompanyInfo>
     @Query("SELECT * FROM TBL_company_info WHERE user_ID = :userId ORDER BY is_favorite DESC, aspiration_level DESC")
     suspend fun getCompaniesByUserId(userId: Long): List<CompanyInfo>
+    @Query("SELECT * FROM TBL_company_info WHERE company_ID = :companyId")
+    suspend fun getCompanyById(companyId: Int): CompanyInfo?
     @Update
     suspend fun update(companyInfo: CompanyInfo)
+
 
     @Delete
     suspend fun delete(companyInfo: CompanyInfo)

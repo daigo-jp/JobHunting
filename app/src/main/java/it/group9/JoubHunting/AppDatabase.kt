@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 // バージョンは変更せずそのまま（もしエラーが出るなら version = 3 に上げて fallbackToDestructiveMigration を追加）
-@Database(entities = [User::class, CompanyInfo::class, Memo::class], version = 2, exportSchema = false)
+@Database(entities = [User::class, CompanyInfo::class, Memo::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
