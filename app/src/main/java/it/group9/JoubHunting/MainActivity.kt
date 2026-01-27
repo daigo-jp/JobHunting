@@ -85,8 +85,9 @@ class MainActivity : AppCompatActivity() {
         setupSearch()
 
         findViewById<Button>(R.id.btnGoRegister).setOnClickListener {
-            // 企業登録画面への遷移処理（必要であれば記述）
-            // startActivity(Intent(this, RegisterCompanyActivity::class.java))
+            // 企業登録画面へ遷移
+            val intent = Intent(this, CompanyRegister::class.java)
+            startActivity(intent)
         }
     }
 
